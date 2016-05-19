@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lianjia.ae.dao.QuestionMapper">
+  <resultMap id="questionMap" type="com.lianjia.ae.model.Question">
+    <id column="id" property="id" />
+    <result column="city_code" property="citycode" />
+    <result column="class_id" property="classid" />
+    <result column="repeat" property="repeat" />
+    <result column="environment" property="environment" />
+    <result column="environment_extend1" property="environmentextend1" />
+    <result column="environment_extend2" property="environmentextend2" />
+    <result column="title"  property="title" />
+    <result column="content" property="content" />
+    <result column="img_url" property="imgurl" />
+    <result column="status" property="status" />
+    <result column="create_ucid" property="createucid" />
+    <result column="create_name" property="createname" />
+    <result column="org_code" property="orgcode" />
+    <result column="org_name" property="orgname" />
+    <result column="create_time" property="createtime" />
+    <result column="receive_time" property="receivetime" />
+    <result column="reply_time" property="replytime" />
+    <result column="resolved" property="resolved" />
+    <result column="warn_count" property="warncount" />
+    <result column="warn_time" property="warntime" />
+    <result column="last_question_flow_id" property="lastquestionflowid" />
+    <result column="update_ucid" property="updateucid" />
+    <result column="update_time" property="updatetime" />
+  </resultMap>
+  <sql id="questionColumn">
+    <trim suffix="" suffixOverrides=",">
+      <if test="id != null">id,</if>
+      <if test="cityCode != null">city_code,</if>
+      <if test="classId != null">class_id,</if>
+      <if test="repeat != null">`repeat`,</if>
+      <if test="environment != null">environment,</if>
+      <if test="environmentExtend1 != null">environment_extend1,</if>
+      <if test="environmentExtend2 != null">environment_extend2,</if>
+      <if test="title != null">title,</if>
+      <if test="content != null">content,</if>
+      <if test="imgUrl != null">img_url,</if>
+      <if test="status != null">`status`,</if>
+      <if test="createUcid != null">create_ucid,</if>
+      <if test="createName != null">create_name,</if>
+      <if test="orgName != null">org_name,</if>
+      <if test="createTime != null">create_time,</if>
+      <if test="receiveTime != null">receive_time,</if>
+      <if test="replyTime != null">reply_time,</if>
+      <if test="resolved != null">resolved,</if>
+      <if test="warnCount != null">warn_count,</if>
+      <if test="warnTime != null">warn_time,</if>
+      <if test="lastQuestionFlowId != null">last_question_flow_id,</if>
+      <if test="updateUcid != null">update_ucid,</if>
+      <if test="updateTime != null">update_time,</if>
+    </trim>
+  </sql>
+  <sql id="questionValue">
+    <trim suffix="" suffixOverrides=",">
+      <if test="id != null">#{id},</if>
+      <if test="cityCode != null">#{cityCode},</if>
+      <if test="classId != null">#{classId},</if>
+      <if test="repeat != null">#{repeat},</if>
+      <if test="environment != null">#{environment},</if>
+      <if test="environmentExtend1 != null">#{environmentExtend1},</if>
+      <if test="environmentExtend2 != null">#{environmentExtend2},</if>
+      <if test="title != null">#{title},</if>
+      <if test="content != null">#{content},</if>
+      <if test="imgUrl != null">#{imgUrl},</if>
+      <if test="status != null">#{status},</if>
+      <if test="createUcid != null">#{createUcid},</if>
+      <if test="createName != null">#{createName},</if>
+      <if test="orgName != null">#{orgName},</if>
+      <if test="createTime != null">#{createTime},</if>
+      <if test="receiveTime != null">#{receiveTime},</if>
+      <if test="replyTime != null">#{replyTime},</if>
+      <if test="resolved != null">#{resolved},</if>
+      <if test="warnCount != null">#{warnCount},</if>
+      <if test="warnTime != null">#{warnTime},</if>
+      <if test="lastQuestionFlowId != null">#{lastQuestionFlowId},</if>
+      <if test="updateUcid != null">#{updateUcid},</if>
+      <if test="updateTime != null">#{updateTime},</if>
+    </trim>
+  </sql>
+  <sql id="questionBaseColumn">
+    <trim suffix="" suffixOverrides=",">
+      id,
+      city_code,
+      class_id,
+      `repeat`,
+      environment,
+      environment_extend1,
+      environment_extend2,
+      title,
+      content,
+      img_url,
+      `status`,
+      create_ucid,
+      create_name,
+      org_name,
+      create_time,
+      receive_time,
+      reply_time,
+      resolved,
+      warn_count,
+      warn_time,
+      last_question_flow_id,
+      update_ucid,
+      update_time,
+    </trim>
+  </sql>
+  <insert id="insert" parameterType="com.lianjia.ae.model.Question" useGeneratedKeys="true" keyProperty="id">
+    insert into question (<include refid="questionColumn"/>) values (<include refid="questionValue"/>)
+  </insert>
+  <insert id="insertBatch" parameterType="java.util.Collection">
+    insert into question(<include refid="questionColumn"/>)
+    values
+    <foreach collection="list" item="item" separator=",">
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            #{item.id},
+            #{item.cityCode},
+            #{item.classId},
+            #{item.repeat},
+            #{item.environment},
+            #{item.environmentExtend1},
+            #{item.environmentExtend2},
+            #{item.title},
+            #{item.content},
+            #{item.imgUrl},
+            #{item.status},
+            #{item.createUcid},
+            #{item.createName},
+            #{item.orgName},
+            #{item.createTime},
+            #{item.receiveTime},
+            #{item.replyTime},
+            #{item.resolved},
+            #{item.warnCount},
+            #{item.warnTime},
+            #{item.lastQuestionFlowId},
+            #{item.updateUcid},
+            #{item.updateTime},
+        </trim>
+    </foreach>
+  </insert>
+
+  <update id="update" parameterType="map">
+    update question
+    <set>
+      <if test="entity.cityCode != null"> city_code=#{entity.cityCode} ,</if>
+      <if test="entity.classId != null"> class_id=#{entity.classId} ,</if>
+      <if test="entity.repeat != null"> `repeat`=#{entity.repeat} ,</if>
+      <if test="entity.environment != null"> environment=#{entity.environment} ,</if>
+      <if test="entity.environmentExtend1 != null"> environment_extend1=#{entity.environmentExtend1} ,</if>
+      <if test="entity.environmentExtend2 != null"> environment_extend2=#{entity.environmentExtend2} ,</if>
+      <if test="entity.title != null"> title=#{entity.title} ,</if>
+      <if test="entity.content != null"> content=#{entity.content} ,</if>
+      <if test="entity.imgUrl != null"> img_url=#{entity.imgUrl} ,</if>
+      <if test="entity.status != null"> `status`=#{entity.status} ,</if>
+      <if test="entity.createUcid != null"> create_ucid=#{entity.createUcid} ,</if>
+      <if test="entity.createName != null"> create_name=#{entity.createName} ,</if>
+      <if test="entity.orgName != null"> org_name=#{entity.orgName} ,</if>
+      <if test="entity.createTime != null"> create_time=#{entity.createTime} ,</if>
+      <if test="entity.receiveTime != null"> receive_time=#{entity.receiveTime} ,</if>
+      <if test="entity.replyTime != null"> reply_time=#{entity.replyTime} ,</if>
+      <if test="entity.resolved != null"> resolved=#{entity.resolved} ,</if>
+      <if test="entity.warnCount != null"> warn_count=#{entity.warnCount} ,</if>
+      <if test="entity.warnTime != null"> warn_time=#{entity.warnTime} ,</if>
+      <if test="entity.lastQuestionFlowId != null"> last_question_flow_id=#{entity.lastQuestionFlowId} ,</if>
+      <if test="entity.updateUcid != null"> update_ucid=#{entity.updateUcid} ,</if>
+      <if test="entity.updateTime != null"> update_time=#{entity.updateTime} ,</if>
+      <if test="includes !=null ">
+        <foreach collection="includes" item="field" open="" close="" separator=",">
+          ${field.tname} = #{entity.${field.name}}
+        </foreach>
+      </if>
+    </set>
+    where id = #{entity.id}
+  </update>
+  <delete id="deleteByPk" parameterType="java.lang.Long">
+       delete from question where id=#{id}
+  </delete>
+
+  <select id="queryByPk" parameterType="java.lang.Long" resultMap="questionMap">
+      select
+      <if test="includes == null" > <include refid="questionBaseColumn"/></if>
+      <if test="inclueds != null" >
+          <foreach collection="includes" item="field" open="" close="" separator=",">
+              ${field}
+          </foreach>
+      </if>
+      from question
+      where id=#{id}
+  </select>
+</mapper>
