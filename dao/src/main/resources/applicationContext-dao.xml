@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+
+	<context:property-placeholder location="classpath:config-dao.properties" ignore-unresolvable="true" />
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+	<context:component-scan base-package="com.lianjia.dao.base" />
+
+	<!-- mysql数据源 -->
+	<bean id="dataSourceParent" abstract="true"
+		class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${jdbc.driverClassName}" />
+		<!-- 等待链接的超时时间 10000ms 超过10s没获取到链接抛出 sqlException -->
+		<property name="checkoutTimeout" value="${jdbc.checkoutTimeout}" />
+		<!--链接泄露追踪-->
+		<!-- 
+		<property name="debugUnreturnedConnectionStackTraces" value="${jdbc.debugUnreturnedConnectionStackTraces}"/>
+		 -->
+		<!--10分钟没释放的链接强制关闭-->
+		<!-- 
+		<property name="unreturnedConnectionTimeout" value="${jdbc.unreturnedConnectionTimeout}"/>
+		 -->
+		<!--测试链接时间间隔 秒 -->
+		<property name="idleConnectionTestPeriod" value="${jdbc.idleConnectionTestPeriod}" />
+		<!--测试链接语句 -->
+		<property name="preferredTestQuery" value="${jdbc.preferredTestQuery}" />
+		<!--中断挂起的任务 秒 -->
+		<property name="maxAdministrativeTaskTime" value="${jdbc.maxAdministrativeTaskTime}" />
+		<property name="numHelperThreads" value="${jdbc.numHelperThreads}" />
+		<!--连接的生存时间 秒 -->
+		<property name="maxConnectionAge" value="${jdbc.maxConnectionAge}" />
+		<!--连接数过多时的空闲时间 必须小于maxIdleTime 用于快速释放链接 -->
+		<property name="maxIdleTimeExcessConnections" value="${jdbc.maxIdleTimeExcessConnections}" />
+		<!--则在close的时候测试连接的有效性 -->
+		<property name="testConnectionOnCheckin" value="${jdbc.testConnectionOnCheckin}" />
+		<!--在每次getConnection的时测试链接有效性 -->
+		<property name="testConnectionOnCheckout" value="${jdbc.testConnectionOnCheckout}" />
+		<property name="minPoolSize" value="${jdbc.minPoolSize}" />
+		<property name="maxPoolSize" value="${jdbc.maxPoolSize}" />
+		<property name="initialPoolSize" value="${jdbc.initialPoolSize}" />
+		<property name="maxIdleTime" value="${jdbc.maxIdleTime}" />
+		<!-- 每次开启连接数 -->
+		<property name="acquireIncrement" value="${jdbc.acquireIncrement}" />
+		<!-- 链接重试次数 -->
+		<property name="acquireRetryAttempts" value="${jdbc.acquireRetryAttempts}" />
+		<!-- 链接重试间隔 -->
+		<property name="acquireRetryDelay" value="${jdbc.acquireRetryDelay}" />
+		<property name="autoCommitOnClose" value="true"/>
+	</bean>
+	
+	<bean id="scheduleDataSource" parent="dataSourceParent">
+		<property name="driverClass" value="com.mysql.jdbc.Driver" />
+		<property name="jdbcUrl" value="${schedule.jdbc.url}" />
+		<property name="user" value="${commonMaster.jdbc.username}" />
+		<property name="password" value="${commonMaster.jdbc.password}" />
+	</bean>
+
+	<bean id="commonMasterDataSource" parent="dataSourceParent">
+		<property name="jdbcUrl" value="${commonMaster.jdbc.url}" />
+		<property name="user" value="${commonMaster.jdbc.username}" />
+		<property name="password" value="${commonMaster.jdbc.password}" />
+	</bean>
+	<bean id="commonSlaveDataSource" parent="dataSourceParent">
+		<property name="jdbcUrl" value="${commonSlave.jdbc.url}" />
+		<property name="user" value="${commonSlave.jdbc.username}" />
+		<property name="password" value="${commonSlave.jdbc.password}" />
+	</bean>
+
+	<bean id="dataSource" class="com.lianjia.common.datasource.DynamicDataSource">
+		<property name="targetDataSources">
+			<map key-type="java.lang.String">
+				<entry key="commonMaster" value-ref="commonMasterDataSource" />
+				<entry key="commonSlave" value-ref="commonSlaveDataSource" />
+			</map>
+		</property>
+	</bean>
+
+	<!-- 配置SqlSessionFactoryBean -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:mybatis-config.xml" />
+		<property name="mapperLocations" value="classpath*:QuestionMapperUDF.xml" />
+	</bean>
+	
+</beans>
